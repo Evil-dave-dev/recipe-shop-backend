@@ -5,7 +5,10 @@ const EnumsIngredients = {
     unit: ["g", "L", "pcs"],
 }
 const EnumsRecipes = {
-    category: [],
+    regime: ["Fruits à Coques", "Arachides", "Gluten", "Fruits de Mer", "Oeuf", "Poisson", "Soja", "Lait", "Viande", "Porc",],
+    dishType: ["Entrée", "Plat", "Dessert", "Apéro", "Autre"],
+    difficulty: ["Easy", "Medium","Hard"],
+    tags: ["A la une", "Pas cher", "Peu de vaisselle", "Pour les fetes", "A cuisiner en famille", "Pour les enfant"],
 }
 
 module.exports = { EnumsRecipes, EnumsIngredients}

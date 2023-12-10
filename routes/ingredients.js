@@ -1,12 +1,22 @@
 var express = require('express');
 var router = express.Router();
+const Ingredient = require('../models/ingredients')
 
-router.get('/', function (req, res, next) {
-    res.json({result: true})
+router.post('/', async (req, res, next)=> {
+    const {name, unit, imageURL, category, allergens} = req.body
+    const ingredient = new Ingredient({
+        "name": name, 
+        "unit": unit,
+        "imageURL": imageURL,
+        "category": category,
+        "allergens": allergens,
+    })
+    const response = await ingredient.save()
+    res.json({result: true, response})
 });
 
-router.post("/", async (req, res) => {
+/*router.post("/", async (req, res) => {
    
-});
+});*/
 
 module.exports = router;

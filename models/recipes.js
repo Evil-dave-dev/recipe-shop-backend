@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
-const recipeSchema = mongoose.Schema({
+const recipeSchema = mongoose.Schema({ 
         "name": String,
-        "creator": ObjectId('user'),
+        "creator": String,
         "imageURL": String,
         "instructions": [String],
-        "ingredients": [{id: ObjectId('ingredients'), "amount": Number}],
+        "ingredients": [{id: String, "amount": Number}],
         "dishType": String,
         "preparationTime": Number,
         "difficulty": String,
