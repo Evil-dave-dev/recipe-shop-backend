@@ -5,7 +5,7 @@ const recipeSchema = mongoose.Schema({
         "creator": String,
         "imageURL": String,
         "instructions": [String],
-        "ingredients": [{id: String, "amount": Number}],
+        "ingredients": [{id: { type: mongoose.Schema.Types.ObjectId, ref: 'ingredients' }, "amount": Number}],
         "dishType": String,
         "preparationTime": Number,
         "difficulty": String,
