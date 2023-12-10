@@ -22,7 +22,8 @@ router.post('/', async (req, res, next)=> {
         "tags": tags,
     })
     const response = await recipe.save()
-    res.json({result: true, response})
+    const populatedRes = await Recipe.findById(response._id).populate('ingredients.id')
+    res.json({result: true, response: populatedRes})
 });
 
 router.get("/", async (req, res) => {

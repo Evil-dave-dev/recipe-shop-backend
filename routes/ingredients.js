@@ -15,8 +15,9 @@ router.post('/', async (req, res, next)=> {
     res.json({result: true, response})
 });
 
-/*router.post("/", async (req, res) => {
-   
-});*/
+router.get("/", async (req, res) => {
+    const response =  await Ingredient.find()
+    res.json({res: response})
+ });
 
 module.exports = router;
