@@ -4,6 +4,10 @@ const Ingredient = require('../models/ingredients')
 
 router.post('/', async (req, res, next) => {
     const { name, unit, imageURL, category, allergens } = req.body
+    const existingIngredient = await Ingredient.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } })
+    if (existingIngredient) {
+        res.json({ result: false, response: "Ingredient already in db" })
+    }
     const ingredient = new Ingredient({
         "name": name,
         "unit": unit,
