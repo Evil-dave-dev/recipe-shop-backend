@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
     res.json({ res: response })
 });
 
-router.get("/search", async (req, res) => {
+router.get("/search/:name", async (req, res) => {
     const response = await Ingredient.find({ name: { $regex: new RegExp(req.params.name, 'i') } })
     res.json({ res: response })
 });
