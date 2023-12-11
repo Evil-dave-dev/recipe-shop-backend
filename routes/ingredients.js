@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/search", async (req, res) => {
-    const response = await Ingredient.find({ name: { $regex: new RegExp(req.body.name, 'i') } })
+    const response = await Ingredient.find({ name: { $regex: new RegExp(req.params.name, 'i') } })
     res.json({ res: response })
 });
 module.exports = router;
