@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const preference = mongoose.Schema({
   regime: [String],
-  excludeAliments: { type: mongoose.Schema.Types.ObjectId, ref: "ingredients" },
+  excludeAliments: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "ingredients" },
+  ],
   queryBasis: String,
   planningDisplay: Boolean,
   favStore: { type: mongoose.Schema.Types.ObjectId, ref: "stores" },
@@ -14,7 +16,7 @@ const usersSchema = mongoose.Schema({
   email: String,
   password: String,
   token: String,
-  preference: [preference],
+  preference: preference,
   favoriteRecipes: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
   myRecipes: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
 });

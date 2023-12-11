@@ -10,7 +10,7 @@ router.get("/", function (req, res, next) {
   res.send("respond with a resource");
 });
 
-// POST users
+// POST signup
 router.post("/signup", function (req, res) {
   if (!checkBody(req.body, ["name", "email", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
@@ -21,25 +21,45 @@ router.post("/signup", function (req, res) {
   const hash = bcrypt.hashSync(req.body.password, 10);
 
   // Check if the user has not already been registered
-  User.findOne({ username: req.body.username, email: req.body.email }).then(
-    (data) => {
-      if (data === null) {
-        const newUser = new User({
-          name: req.body.name,
-          email: req.body.email,
-          password: hash,
-          token: uid2(32),
-        });
+  User.findOne({
+    $or: [
+      { name: req.body.name.toLowerCase() },
+      { email: req.body.email.toLowerCase() },
+    ],
+  }).then((data) => {
+    if (data === null) {
+      const newUser = new User({
+        name: req.body.name.toLowerCase(),
+        email: req.body.email,
+        password: hash,
+        token: uid2(32),
+      });
 
-        newUser.save().then(() => {
-          res.json({ result: true, newUser: newUser });
-        });
-      } else {
-        // if data user exist => don't create new user
-        res.json({ result: false, error: "User already exists" });
-      }
+      newUser.save().then(() => {
+        res.json({ result: true, newUser: newUser });
+      });
+    } else {
+      // if data user exist => don't create new user
+      res.json({ result: false, error: "User already exists" });
     }
-  );
+  });
+});
+
+// POST signin
+router.post("/signin", function (req, res) {
+  if (!checkBody(req.body, ["name", "password"])) {
+    res.json({ result: false, error: "Missing or empty fields" });
+    return;
+  }
+
+  // Check if the user has already been registered
+  User.findOne({ name: req.body.name.toLowerCase() }).then((data) => {
+    if (data !== null) {
+      res.json({ result: true });
+    } else {
+      res.json({ result: false, error: "User don't exists" });
+    }
+  });
 });
 
 module.exports = router;
