@@ -43,14 +43,13 @@ router.get("/find/tag=:tag", async (req, res) => {
 });
 
 router.post("/pictures", async (req, res) => {
-    console.log(req.files.picture.data)
-    const photoPath = `../tmp/${uniqid()}.jpg`;
-    const resultMove = await req.files.picture.data.mv(photoPath);
+    const photoPath = `./tmp/${uniqid()}.jpg`;
 
-    if(resultMove) res.json({result: false, error: "Server couldn't temporarily save result"})
-
+    fs.writeFileSync(photoPath, req.files.picture.data);
     const resultCloudinary = await cloudinary.uploader.upload(photoPath);
+
     fs.unlinkSync(photoPath);
+
     res.json({ result: true, url: resultCloudinary.secure_url });
 })
 
