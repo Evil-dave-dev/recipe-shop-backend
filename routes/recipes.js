@@ -27,7 +27,7 @@ router.post('/', async (req, res, next)=> {
 });
 
 router.get("/", async (req, res) => {
-   const response =  await Recipe.find().populate('ingredients.id')
+   const response =  await Recipe.find().populate('ingredients.id').sort({ _id: -1 }) 
    res.json({res: response})
 });
 

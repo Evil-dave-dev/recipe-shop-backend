@@ -1,5 +1,5 @@
 const EnumsIngredients = {
-    ailse: ["Fruits & Légumes", "Boulangerie & Pâtisseries", "Produits laitiers", "Viandes & Poissons", "Epices", "Epicerie Salée", "Epicerie Sucrée" , "Pâtes, Riz $ Céréales", "Autre" ],
+    ailse: ["Fruits & Légumes", "Boulangerie & Pâtisseries", "Produits laitiers", "Viandes & Poissons", "Epices", "Epicerie Salée", "Epicerie Sucrée" , "Pâtes, Riz & Céréales", "Autre" ],
     allergens: ["Fruits à Coques", "Arachides", "Gluten", "Fruits de Mer", "Oeuf", "Poisson", "Soja", "Lait", "Viande", "Porc", ],
     unit: ["g", "L", "pcs"],
 }
