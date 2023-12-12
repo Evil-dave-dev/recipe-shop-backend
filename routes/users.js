@@ -52,10 +52,14 @@ router.post("/signin", function (req, res) {
     return;
   }
 
+  const hash = bcrypt.hashSync(req.body.password, 10);
+
   // Check if the user has already been registered
   User.findOne({ name: req.body.name.toLowerCase() }).then((data) => {
-    if (data !== null) {
+    if (data) {
       res.json({ result: true });
+    } else if (bcrypt.compareSync(req.body.password, data.password)) {
+      res.json({ result: false, error: "wrong password" });
     } else {
       res.json({ result: false, error: "User don't exists" });
     }
