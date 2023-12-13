@@ -2,9 +2,13 @@ var express = require('express');
 var router = express.Router();
 const Recipe = require('../models/recipes');
 const checkBody = require('../modules/checkBody');
+const uniqid = require('uniqid');
+const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
-router.post('/', async (req, res, next)=> {
-    const {name, creator, imageURL, instructions, ingredients, dishType, preparationTime, difficulty, regime, tags} = req.body
+
+router.post('/', async (req, res, next) => {
+    const { name, creator, imageURL, instructions, ingredients, dishType, preparationTime, difficulty, regime, tags } = req.body
 
     //const validation = checkBody(req)
     //if(!validation.result) res.json(validation)
@@ -14,21 +18,48 @@ router.post('/', async (req, res, next)=> {
         "creator": creator,
         "imageURL": imageURL,
         "instructions": instructions,
-        "ingredients": ingredients.map(e => ({id: e.id, amount: e.amount })),
+        "ingredients": ingredients.map(e => ({ id: e.id, amount: e.amount })),
         "dishType": dishType,
         "preparationTime": preparationTime,
         "difficulty": difficulty,
         "regime": regime,
         "tags": tags,
     })
+
     const response = await recipe.save()
     const populatedRes = await Recipe.findById(response._id).populate('ingredients.id')
-    res.json({result: true, response: populatedRes})
+
+    res.json({ result: true, response: populatedRes })
 });
 
 router.get("/", async (req, res) => {
-   const response =  await Recipe.find().populate('ingredients.id').sort({ _id: -1 }) 
-   res.json({res: response})
+    const response = await Recipe.find().populate('ingredients.id').sort({ _id: -1 })
+    res.json({ res: response })
+});
+
+
+
+router.get("/find/tag=:tag", async (req, res) => {
+    const response = await Recipe.find({ tags: { $in: [req.params.tag] } }).populate('ingredients.id').sort({ _id: -1 })
+    res.json({ res: response })
+});
+
+router.post("/pictures", async (req, res) => {
+    try {
+        const resultCloudinary = await cloudinary.uploader.upload_stream(
+            async (error, result) => {
+                if (error) {
+                    console.error('Error uploading to Cloudinary:', error);
+                    res.status(500).json({ result: false, error: 'Internal Server Error' });
+                } else {
+                    res.json({ result: true, url: result.secure_url });
+                }
+            }
+        ).end(req.files.picture.data);
+    } catch (error) {
+        console.error('Error processing picture:', error);
+        res.status(500).json({ result: false, error: 'Internal Server Error' });
+    }
 });
 
 module.exports = router;
