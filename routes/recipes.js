@@ -47,18 +47,18 @@ router.get("/find/tag=:tag", async (req, res) => {
 
 //save photo to cloudinary
 //return photo url
+
 router.post("/pictures", async (req, res) => {
     const photoPath = `./tmp/${uniqid()}.jpg`;
-    try {
-        await fs.promises.writeFile(photoPath, req.files.picture.data);
-    } catch (error) {
-        res.json({result: false, error})
+    const resultMove = await req.files.picture.mv(photoPath);
+
+    if (!resultMove) {
+        const resultCloudinary = await cloudinary.uploader.upload(photoPath)
+        fs.unlinkSync(photoPath)
+        res.json({ "result": true, "url": resultCloudinary.secure_url, })
+    } else {
+        res.json({ result: false, error: resultMove });
     }
-    const resultCloudinary = await cloudinary.uploader.upload(photoPath);
-
-    fs.unlinkSync(photoPath);
-
-    res.json({ result: true, url: resultCloudinary.secure_url });
-})
+});
 
 module.exports = router;
