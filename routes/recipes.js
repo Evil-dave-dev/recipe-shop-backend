@@ -44,27 +44,21 @@ router.get("/find/tag=:tag", async (req, res) => {
     res.json({ res: response })
 });
 
-
-//save photo to cloudinary
-//return photo url
-
 router.post("/pictures", async (req, res) => {
-    const photoPath = `./tmp/${uniqid()}.jpg`;
-
-    if (!fs.existsSync('./tmp/')) {
-        await fs.mkdirSync('./tmp/');
-    }
-
-    const resultMove = await req.files.picture.mv(photoPath);
-
-    if (!resultMove) {
-        const resultCloudinary = await cloudinary.uploader.upload(photoPath)
-        if (fs.existsSync(photoPath)) {
-            fs.unlinkSync(photoPath);
-        }
-        res.json({ "result": true, "url": resultCloudinary.secure_url, })
-    } else {
-        res.json({ result: false, error: resultMove });
+    try {
+        const resultCloudinary = await cloudinary.uploader.upload_stream(
+            async (error, result) => {
+                if (error) {
+                    console.error('Error uploading to Cloudinary:', error);
+                    res.status(500).json({ result: false, error: 'Internal Server Error' });
+                } else {
+                    res.json({ result: true, url: result.secure_url });
+                }
+            }
+        ).end(req.files.picture.data);
+    } catch (error) {
+        console.error('Error processing picture:', error);
+        res.status(500).json({ result: false, error: 'Internal Server Error' });
     }
 });
 
