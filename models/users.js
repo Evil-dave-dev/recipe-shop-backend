@@ -17,8 +17,24 @@ const usersSchema = mongoose.Schema({
   password: String,
   token: String,
   preference: preference,
-  favoriteRecipes: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
-  myRecipes: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
+  favoriteRecipes: [
+    {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
+    },
+  ],
+  myRecipes: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" } }],
+  currentRecipes: [
+    {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
+      date: Date,
+    },
+  ],
+  historyRecipes: [
+    {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
+      date: Date,
+    },
+  ],
 });
 
 const User = mongoose.model("users", usersSchema);

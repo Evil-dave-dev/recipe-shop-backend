@@ -12,27 +12,38 @@ router.get("/", function (req, res, next) {
 
 // POST signup
 router.post("/signup", function (req, res) {
-  if (!checkBody(req.body, ["name", "email", "password"])) {
+  const { name, email, password } = req.body;
+
+  if (!checkBody(name, email, password)) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValidEmail = emailRegex.test(email);
+  // console.log(email, "est ", isValidEmail);
+  if (!isValidEmail) {
+    res.json({ result: false, error: "email is not valid" });
+    return;
+  }
+
   const token = uid2(32);
-  const hash = bcrypt.hashSync(req.body.password, 10);
+  const hash = bcrypt.hashSync(password, 10);
 
   // Check if the user has not already been registered
   User.findOne({
-    $or: [
-      { name: req.body.name.toLowerCase() },
-      { email: req.body.email.toLowerCase() },
-    ],
+    $or: [{ name: name.toLowerCase() }, { email: email.toLowerCase() }],
   }).then((data) => {
     if (data === null) {
       const newUser = new User({
-        name: req.body.name.toLowerCase(),
-        email: req.body.email,
+        name: name.toLowerCase(),
+        email: email,
         password: hash,
         token: uid2(32),
+        favoriteRecipes: [],
+        myRecipes: [],
+        currentRecipes: [],
+        historyRecipes: [],
       });
 
       newUser.save().then(() => {
@@ -47,7 +58,9 @@ router.post("/signup", function (req, res) {
 
 // POST signin
 router.post("/signin", function (req, res) {
-  if (!checkBody(req.body, ["name", "password"])) {
+  const { name, password } = req.body;
+
+  if (!checkBody(name, email, password)) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
@@ -55,9 +68,9 @@ router.post("/signin", function (req, res) {
   const hash = bcrypt.hashSync(req.body.password, 10);
 
   // Check if the user has already been registered
-  User.findOne({ name: req.body.name.toLowerCase() }).then((data) => {
+  User.findOne({ name: name.toLowerCase() }).then((data) => {
     if (data) {
-      if (bcrypt.compareSync(req.body.password, data.password)) {
+      if (bcrypt.compareSync(password, data.password)) {
         res.json({ result: true });
       } else {
         res.json({ result: false, error: "wrong password" });
