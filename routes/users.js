@@ -14,14 +14,13 @@ router.get("/", function (req, res, next) {
 router.post("/signup", function (req, res) {
   const { name, email, password } = req.body;
 
-  if (!checkBody(name, email, password)) {
+  if (!checkBody(req.body, ["name", "email", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isValidEmail = emailRegex.test(email);
-  // console.log(email, "est ", isValidEmail);
   if (!isValidEmail) {
     res.json({ result: false, error: "email is not valid" });
     return;
@@ -60,7 +59,7 @@ router.post("/signup", function (req, res) {
 router.post("/signin", function (req, res) {
   const { name, password } = req.body;
 
-  if (!checkBody(name, email, password)) {
+  if (!checkBody(req.body, ["name", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
