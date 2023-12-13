@@ -37,11 +37,16 @@ router.get("/", async (req, res) => {
     res.json({ res: response })
 });
 
+
+
 router.get("/find/tag=:tag", async (req, res) => {
     const response = await Recipe.find({ tags: { $in: [req.params.tag] } }).populate('ingredients.id').sort({ _id: -1 })
     res.json({ res: response })
 });
 
+
+//save photo to cloudinary
+//return photo url
 router.post("/pictures", async (req, res) => {
     const photoPath = `./tmp/${uniqid()}.jpg`;
 
