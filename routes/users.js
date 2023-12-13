@@ -42,9 +42,9 @@ router.post("/signup", function (req, res) {
         preference: {
           regime: [],
           excludeAliments: [],
-          queryBasis: null,
-          planningDisplay: null,
-          favStore: {},
+          queryBasis: "",
+          planningDisplay: false,
+          favStore: null,
           postCode: null,
         },
         favoriteRecipes: [],

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const preference = mongoose.Schema({
+const preferenceSchema = mongoose.Schema({
   regime: [String],
   excludeAliments: [
     { type: mongoose.Schema.Types.ObjectId, ref: "ingredients" },
@@ -16,7 +16,7 @@ const usersSchema = mongoose.Schema({
   email: String,
   password: String,
   token: String,
-  preference: preference,
+  preference: preferenceSchema,
   favoriteRecipes: [
     {
       id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
