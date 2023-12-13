@@ -50,11 +50,18 @@ router.get("/find/tag=:tag", async (req, res) => {
 
 router.post("/pictures", async (req, res) => {
     const photoPath = `./tmp/${uniqid()}.jpg`;
+
+    if (!fs.existsSync('./tmp/')) {
+        await fs.mkdirSync('./tmp/');
+    }
+
     const resultMove = await req.files.picture.mv(photoPath);
 
     if (!resultMove) {
         const resultCloudinary = await cloudinary.uploader.upload(photoPath)
-        fs.unlinkSync(photoPath)
+        if (fs.existsSync(photoPath)) {
+            fs.unlinkSync(photoPath);
+        }
         res.json({ "result": true, "url": resultCloudinary.secure_url, })
     } else {
         res.json({ result: false, error: resultMove });
