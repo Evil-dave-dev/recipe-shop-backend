@@ -34,21 +34,21 @@ router.post("/signup", function (req, res) {
     $or: [{ name: name.toLowerCase() }, { email: email.toLowerCase() }],
   }).then((data) => {
     if (data === null) {
-      const newPreference = {
-        regime: [],
-        excludeAliments: [],
-        queryBasis: null,
-        planningDisplay: null,
-        favStore: {},
-        postCode: null,
-      };
+      // const newPreference = {
+      //   regime: [],
+      //   excludeAliments: [],
+      //   queryBasis: null,
+      //   planningDisplay: null,
+      //   favStore: {},
+      //   postCode: null,
+      // };
 
       const newUser = new User({
         name: name.toLowerCase(),
         email: email,
         password: hash,
         token: uid2(32),
-        preference: newPreference,
+        // preference: newPreference,
         favoriteRecipes: [],
         myRecipes: [],
         currentRecipes: [],
