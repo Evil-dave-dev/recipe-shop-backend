@@ -10,10 +10,10 @@ router.post("/add", function (req, res, next) {
   res.json({ ingredient: req.body });
   const newRecipe = req.body;
 
-  User.updateOne({
-    token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup",
-    $push: { currentRecipes: newRecipe },
-  })
+  User.updateOne(
+    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+    { $push: { currentRecipes: newRecipe } }
+  )
     .then(() => {
       res.json({ result: true, message: "Recipe added successfully." });
     })
