@@ -104,14 +104,14 @@ router.post("/like", function (req, res, next) {
     { $addToSet: { favoriteRecipes: req.body } }
   ).then((data) => {
     if (data.modifiedCount > 0) {
-      res.json({ result: req.body, message: "Recipe liked" });
+      res.json({ result: true, message: "Recipe liked" });
     } else {
       User.updateOne(
         { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
         { $pull: { favoriteRecipes: req.body } }
       ).then((data) => {
         if (data.modifiedCount > 0) {
-          res.json({ result: req.body, message: "Recipe unliked" });
+          res.json({ result: true, message: "Recipe unliked" });
         } else {
           res.json({ result: false, message: "Recipe not liked or unliked" });
         }
