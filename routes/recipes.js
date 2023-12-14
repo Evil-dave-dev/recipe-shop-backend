@@ -44,6 +44,11 @@ router.get("/find/tag=:tag", async (req, res) => {
     res.json({ res: response })
 });
 
+router.get("/search", async (req, res) => {
+    console.log(req.query);
+    res.json({result: true, response: response })
+});
+
 router.post("/pictures", async (req, res) => {
     try {
         const resultCloudinary = await cloudinary.uploader.upload_stream(
