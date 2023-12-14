@@ -120,4 +120,18 @@ router.post("/like", function (req, res, next) {
   });
 });
 
+router.get("/recipes", async (req, res, next) => {
+  const user = await User.findOne({
+    token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd",
+  }).populate({
+    path: "currentRecipes.id",
+    populate: {
+      path: "ingredients.id",
+      model: "ingredients",
+    },
+  });
+
+  res.json({ result: true, response: {currentRecipes: user.currentRecipes }});
+});
+
 module.exports = router;
