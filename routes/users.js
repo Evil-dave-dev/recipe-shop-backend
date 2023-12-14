@@ -5,9 +5,25 @@ const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const { checkBody } = require("../modules/checkBody");
 
-/* GET users listing. */
+/* POST add recipe */
 router.post("/add", function (req, res, next) {
-  res.json({ result: req.body });
+  res.json({ ingredient: req.body });
+  const newRecipe = req.body;
+
+  User.updateOne({
+    token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup",
+    $push: { currentRecipes: newRecipe },
+  })
+    .then(() => {
+      res.json({ result: true, message: "Recipe added successfully." });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        result: false,
+        message: "Failed to add recipe.",
+        error: error.message,
+      });
+    });
 });
 
 // POST signup
