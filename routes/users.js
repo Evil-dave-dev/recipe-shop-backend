@@ -24,7 +24,6 @@ router.post("/signup", function (req, res) {
   const token = uid2(32);
   const hash = bcrypt.hashSync(password, 10);
 
-  // Check if the user has not already been registered
   User.findOne({
     $or: [{ name: name.toLowerCase() }, { email: email.toLowerCase() }],
   }).then((data) => {
@@ -52,7 +51,6 @@ router.post("/signup", function (req, res) {
         res.json({ result: true, newUser: newUser });
       });
     } else {
-      // if data user exist => don't create new user
       res.json({ result: false, error: "User already exists" });
     }
   });
@@ -69,7 +67,6 @@ router.post("/signin", function (req, res) {
 
   const hash = bcrypt.hashSync(req.body.password, 10);
 
-  // Check if the user has already been registered
   User.findOne({ name: name.toLowerCase() }).then((data) => {
     if (data) {
       if (bcrypt.compareSync(password, data.password)) {
@@ -83,7 +80,7 @@ router.post("/signin", function (req, res) {
   });
 });
 
-/* POST add recipe */
+// POST add recipe
 router.post("/add", function (req, res, next) {
   User.updateOne(
     { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
@@ -97,7 +94,7 @@ router.post("/add", function (req, res, next) {
   });
 });
 
-/* POST like recipe */
+// POST like recipe
 router.post("/like", function (req, res, next) {
   User.updateOne(
     { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
@@ -120,6 +117,7 @@ router.post("/like", function (req, res, next) {
   });
 });
 
+// GET list ingredients
 router.get("/recipes", async (req, res, next) => {
   const user = await User.findOne({
     token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd",
@@ -131,7 +129,7 @@ router.get("/recipes", async (req, res, next) => {
     },
   });
 
-  res.json({ result: true, response: {currentRecipes: user.currentRecipes }});
+  res.json({ result: true, response: { currentRecipes: user.currentRecipes } });
 });
 
 module.exports = router;
