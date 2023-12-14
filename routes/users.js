@@ -6,8 +6,9 @@ const bcrypt = require("bcrypt");
 const { checkBody } = require("../modules/checkBody");
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+router.get("/addRecipe", function (req, res, next) {
+  const date = new Date();
+  res.json({ now: date });
 });
 
 // POST signup
