@@ -86,7 +86,7 @@ router.post("/signin", function (req, res) {
 /* POST add recipe */
 router.post("/add", function (req, res, next) {
   User.updateOne(
-    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
     { $push: { currentRecipes: req.body } }
   ).then((data) => {
     if (data.modifiedCount > 0) {
@@ -100,14 +100,14 @@ router.post("/add", function (req, res, next) {
 /* POST like recipe */
 router.post("/like", function (req, res, next) {
   User.updateOne(
-    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
     { $addToSet: { favoriteRecipes: req.body } }
   ).then((data) => {
     if (data.modifiedCount > 0) {
       res.json({ result: req.body, message: "Recipe liked" });
     } else {
       User.updateOne(
-        { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+        { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
         { $pull: { favoriteRecipes: req.body } }
       ).then((data) => {
         if (data.modifiedCount > 0) {
