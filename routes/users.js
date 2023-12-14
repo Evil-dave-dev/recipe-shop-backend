@@ -5,20 +5,6 @@ const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const { checkBody } = require("../modules/checkBody");
 
-/* POST add recipe */
-router.post("/add", function (req, res, next) {
-  User.updateOne(
-    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
-    { $push: { currentRecipes: req.body } }
-  ).then((data) => {
-    if (data.modifiedCount > 0) {
-      res.json({ result: true, message: "Recipe added successfully." });
-    } else {
-      res.json({ result: false, message: "Recipe not added." });
-    }
-  });
-});
-
 // POST signup
 router.post("/signup", function (req, res) {
   const { name, email, password } = req.body;
@@ -93,6 +79,43 @@ router.post("/signin", function (req, res) {
       }
     } else {
       res.json({ result: false, error: "User don't exists" });
+    }
+  });
+});
+
+/* POST add recipe */
+router.post("/add", function (req, res, next) {
+  User.updateOne(
+    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+    { $push: { currentRecipes: req.body } }
+  ).then((data) => {
+    if (data.modifiedCount > 0) {
+      res.json({ result: true, message: "Recipe added successfully." });
+    } else {
+      res.json({ result: false, message: "Recipe not added." });
+    }
+  });
+});
+
+/* POST like recipe */
+router.post("/like", function (req, res, next) {
+  User.updateOne(
+    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+    { $addToSet: { favoriteRecipes: req.body } }
+  ).then((data) => {
+    if (data.modifiedCount > 0) {
+      res.json({ result: true, message: "Recipe liked." });
+    } else {
+      User.updateOne(
+        { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+        { $pull: { favoriteRecipes: req.body } }
+      ).then((data) => {
+        if (data.modifiedCount > 0) {
+          res.json({ result: true, message: "Recipe liked." });
+        } else {
+          res.json({ result: true, message: "Recipe not liked." });
+        }
+      });
     }
   });
 });
