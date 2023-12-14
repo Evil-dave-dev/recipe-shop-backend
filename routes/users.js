@@ -7,7 +7,6 @@ const { checkBody } = require("../modules/checkBody");
 
 /* POST add recipe */
 router.post("/add", function (req, res, next) {
-  res.json({ ingredient: req.body });
   const newRecipe = req.body;
 
   User.updateOne(
