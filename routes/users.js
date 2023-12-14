@@ -111,7 +111,7 @@ router.post("/like", function (req, res, next) {
         { $pull: { favoriteRecipes: req.body } }
       ).then((data) => {
         if (data.modifiedCount > 0) {
-          res.json({ result: true, message: "Recipe unliked" });
+          res.json({ result: false, message: "Recipe unliked" });
         } else {
           res.json({ result: false, message: "Recipe not liked or unliked" });
         }
