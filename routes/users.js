@@ -10,7 +10,7 @@ router.post("/add", function (req, res, next) {
   const newRecipe = req.body;
 
   User.updateOne(
-    { token: "657abd656fad26ff4d65519b" },
+    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
     { $push: { currentRecipes: newRecipe } }
   )
     .then((result) => {
