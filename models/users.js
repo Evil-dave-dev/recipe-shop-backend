@@ -11,6 +11,12 @@ const preferenceSchema = mongoose.Schema({
   postCode: Number,
 });
 
+const recipesSchema = mongoose.Schema({
+  id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
+  date: Date,
+  nb: Number,
+});
+
 const usersSchema = mongoose.Schema({
   name: String,
   email: String,
@@ -23,18 +29,8 @@ const usersSchema = mongoose.Schema({
     },
   ],
   myRecipes: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" } }],
-  currentRecipes: [
-    {
-      id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
-      date: Date,
-    },
-  ],
-  historyRecipes: [
-    {
-      id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
-      date: Date,
-    },
-  ],
+  currentRecipes: [recipesSchema],
+  historyRecipes: [recipesSchema],
 });
 
 const User = mongoose.model("users", usersSchema);

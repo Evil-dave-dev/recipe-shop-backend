@@ -7,11 +7,9 @@ const { checkBody } = require("../modules/checkBody");
 
 /* POST add recipe */
 router.post("/add", function (req, res, next) {
-  const newRecipe = req.body;
-
   User.updateOne(
     { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
-    { $push: { currentRecipes: newRecipe } }
+    { $push: { currentRecipes: req.body } }
   )
     .then((result) => {
       if (result.nModified > 0) {
