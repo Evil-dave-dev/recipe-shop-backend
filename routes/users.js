@@ -10,11 +10,18 @@ router.post("/add", function (req, res, next) {
   const newRecipe = req.body;
 
   User.updateOne(
-    { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
+    { token: "657abd656fad26ff4d65519b" },
     { $push: { currentRecipes: newRecipe } }
   )
-    .then(() => {
-      res.json({ result: true, message: "Recipe added successfully." });
+    .then((result) => {
+      if (result.nModified > 0) {
+        res.json({ result: true, message: "Recipe added successfully." });
+      } else {
+        res.json({
+          result: false,
+          message: "Recipe not added. User not found.",
+        });
+      }
     })
     .catch((error) => {
       res.status(500).json({
