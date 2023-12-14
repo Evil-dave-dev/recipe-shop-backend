@@ -11,7 +11,11 @@ router.post("/add", function (req, res, next) {
     { token: "gnNsRz0jWMRBK8c9s_hnnpYWMaxaRrup" },
     { $push: { currentRecipes: req.body } }
   ).then((data) => {
-    res.json({ result: data, message: "Recipe added successfully." });
+    if (data.modifiedCount > 0) {
+      res.json({ result: true, message: "Recipe added successfully." });
+    } else {
+      res.json({ result: false, message: "Recipe not added." });
+    }
   });
 });
 
