@@ -4,6 +4,7 @@ const User = require("../models/users");
 const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const { checkBody } = require("../modules/checkBody");
+const { post } = require("./recipes");
 
 // POST signup
 router.post("/signup", function (req, res) {
@@ -65,8 +66,6 @@ router.post("/signin", function (req, res) {
     return;
   }
 
-  const hash = bcrypt.hashSync(req.body.password, 10);
-
   User.findOne({ name: name.toLowerCase() }).then((data) => {
     if (data) {
       if (bcrypt.compareSync(password, data.password)) {
@@ -113,6 +112,45 @@ router.post("/like", function (req, res, next) {
           res.json({ result: false, message: "Recipe not liked or unliked" });
         }
       });
+    }
+  });
+});
+
+//PUT change preferences
+router.put("/preference", function (req, res, next) {
+  const {
+    regime = null,
+    excludeAliments = null,
+    planningDisplay = null,
+    favStore = null,
+    postCode = "",
+  } = req.body;
+
+  const update = {};
+
+  if (regime) {
+    update["preference.regime"] = regime;
+  }
+  if (excludeAliments) {
+    update["preference.excludeAliments"] = excludeAliments;
+  }
+  if (planningDisplay) {
+    update["preference.planningDisplay"] = planningDisplay;
+  }
+  if (favStore) {
+    update["preference.excludeAliments.favStore"] = favStore;
+  }
+  if (postCode) {
+    update["preference.postCode"] = postCode;
+  }
+  User.updateOne(
+    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+    { $set: update }
+  ).then((data) => {
+    if (data.modifiedCount > 0) {
+      res.json({ result: true, message: "Preferences modified successfully." });
+    } else {
+      res.json({ result: false, message: "Couldn't modify preferences." });
     }
   });
 });
