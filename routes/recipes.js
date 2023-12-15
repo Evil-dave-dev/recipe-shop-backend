@@ -59,7 +59,7 @@ router.get("/find/tag=:tag", async (req, res) => {
 });
 
 router.get("/search", async (req, res) => {
-  const { input = "", time = false, type = "", difficulty = "" } = req.query;
+  const { input = "", time = false, type = "", difficulty = "", tag = "" } = req.query;
 
   const query = {};
 
@@ -67,6 +67,8 @@ router.get("/search", async (req, res) => {
   if (time || !time === "135") query.preparationTime = { $lt: parseInt(time, 10) };
   if (type) query.dishType = type;
   if (difficulty) query.difficulty = difficulty;
+  if (tag) query.tags = { $in: [tag]}
+    
 
   const recipes = await Recipe.find(query)
     .populate("ingredients.id")
