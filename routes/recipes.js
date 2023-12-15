@@ -59,16 +59,41 @@ router.get("/find/tag=:tag", async (req, res) => {
 });
 
 router.get("/search", async (req, res) => {
-  const { input = "", time = false, type = "", difficulty = "", tag = "" } = req.query;
+  const {
+    input = "",
+    time = "",
+    type = "",
+    difficulty = "",
+    tag = "",
+    regime = "",
+    exclAliments = "",
+  } = req.query;
 
   const query = {};
 
-  if (input) query.name = { $regex: new RegExp(input, "i") };
-  if (time || !time === "135") query.preparationTime = { $lt: parseInt(time, 10) };
-  if (type) query.dishType = type;
-  if (difficulty) query.difficulty = difficulty;
-  if (tag) query.tags = { $in: [tag]}
-    
+  if (input) {
+    query.name = { $regex: new RegExp(input, "i") };
+  }
+  if (time && !time === "135") {
+    query.preparationTime = { $lt: parseInt(time + 1, 10) };
+  }
+  if (type) {
+    query.dishType = type;
+  }
+  if (difficulty) {
+    query.difficulty = difficulty;
+  }
+  if (tag) {
+    query.tags = { $in: [tag] };
+  }
+  if (regime) {
+    const parsedRegime = regime.split(",");
+    query.regime = { $nin: parsedRegime };
+  }
+  if (exclAliments) {
+    const parsedExclAliments = exclAliments.split(",");
+    query["ingredients.id"] = { $nin: parsedExclAliments };
+  }
 
   const recipes = await Recipe.find(query)
     .populate("ingredients.id")
