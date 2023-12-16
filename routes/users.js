@@ -317,13 +317,14 @@ router.get("/recipes", async (req, res, next) => {
     populate: {
       path: "ingredients.id",
       model: "ingredients",
-    }.populate({
-      path: "historyRecipes.id",
-      populate: {
-        path: "ingredients.id",
-        model: "ingredients",
-      },
-    }),
+    },
+  })
+  .populate({
+    path: "historyRecipes.id",
+    populate: {
+      path: "ingredients.id",
+      model: "ingredients",
+    },
   });
 
   res.json({ result: true, response: { currentRecipes: user.currentRecipes } });
