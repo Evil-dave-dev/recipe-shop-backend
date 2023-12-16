@@ -75,7 +75,7 @@ router.get("/search", async (req, res) => {
     query.name = { $regex: new RegExp(input, "i") };
   }
   if (time || !time === "135") {
-    query.preparationTime = { $lt: parseInt(time + 1, 10) };
+    query.preparationTime = { $lt: parseInt(time, 10)+1 };
   }
   if (type) {
     query.dishType = type;
