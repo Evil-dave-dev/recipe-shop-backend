@@ -6,6 +6,21 @@ const uniqid = require("uniqid");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 
+/**
+ * add a recipe to database
+ * @name POST/api/recipes/
+ * @param {string}name name of the recipe
+ * @param {string}creator name of the creator
+ * @param {string}imageURL image link
+ * @param {string[]}instructions array of instructions
+ * @param {string[]}ingredients array of ingredients _id
+ * @param {string}dishType dish type ( entrée, plat, dessert, ...)
+ * @param {number}preparationTime amount of time to prepare the dish
+ * @param {string}difficulty (easy, hars, medium)
+ * @param {string[]}regime list of allergens ("Fruits a coque, poisson, ...")
+ * @param {string[]}tags list of tags ("A la une, Pour les fêtes, ...")
+ * @returns {object} recipe update status, returns modified and populated recipes array
+ */
 router.post("/", async (req, res, next) => {
   const {
     name,
@@ -19,9 +34,6 @@ router.post("/", async (req, res, next) => {
     regime,
     tags,
   } = req.body;
-
-  //const validation = checkBody(req)
-  //if(!validation.result) res.json(validation)
 
   const recipe = new Recipe({
     name: name,
@@ -44,6 +56,11 @@ router.post("/", async (req, res, next) => {
   res.json({ result: true, response: populatedRes });
 });
 
+/**
+ * get all recipes
+ * @name GET/api/recipes
+ * @returns {object} query status, returns populated recipes array
+ */
 router.get("/", async (req, res) => {
   const response = await Recipe.find()
     .populate("ingredients.id")
@@ -51,6 +68,7 @@ router.get("/", async (req, res) => {
   res.json({ res: response });
 });
 
+/**@toDelete */
 router.get("/find/tag=:tag", async (req, res) => {
   const response = await Recipe.find({ tags: { $in: [req.params.tag] } })
     .populate("ingredients.id")
@@ -58,6 +76,18 @@ router.get("/find/tag=:tag", async (req, res) => {
   res.json({ res: response });
 });
 
+/**
+ * search recipes by myltiple parameters
+ * @name GET/api/recipes/search
+ * @param {string} req.query.input reference to use for searching by name in database
+ * @param {string} req.query.time max amount of time for searcing by preparation time in db, if "135" no time limit
+ * @param {string} req.query.type type to search for ("entree, plat, ...")
+ * @param {string} req.query.difficulty difficulty level ("easy, hard, ..")
+ * @param {string} req.query.tag tag to search for ("A la une, pour les fetes, ..")
+ * @param {string} req.query.regime ","-separated list of redimes to exclude in the query ("vegan, lactose, porc, ..")
+ * @param {string} req.query.exclAliments "," separated list of aliment _id to exclude int the query
+ * @returns {object} query status, reutrns populated recipes array
+ */
 router.get("/search", async (req, res) => {
   const {
     input = "",
@@ -75,7 +105,7 @@ router.get("/search", async (req, res) => {
     query.name = { $regex: new RegExp(input, "i") };
   }
   if (time || !time === "135") {
-    query.preparationTime = { $lt: parseInt(time, 10)+1 };
+    query.preparationTime = { $lt: parseInt(time, 10) + 1 };
   }
   if (type) {
     query.dishType = type;
@@ -102,6 +132,13 @@ router.get("/search", async (req, res) => {
   res.json({ result: true, response: recipes });
 });
 
+
+/**
+ * upload picture to cloudinary and return the url
+ * @name POST/api/recipes/pictures
+ * @param {file??} req.files.data picture file to upload
+ * @returns {object} query status, saved picuture url
+ */
 router.post("/pictures", async (req, res) => {
   try {
     const resultCloudinary = await cloudinary.uploader

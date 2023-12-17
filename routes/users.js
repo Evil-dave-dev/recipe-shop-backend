@@ -7,10 +7,12 @@ const { checkBody } = require("../modules/checkBody");
 
 //------------USER ACCOUNT CRUD OPERATIONS-----------//
 
-/** handles signup, validates user information, initialize user document, save user to db, return user information
- * @param {string} name
- * @param {string} email
- * @param {string} password
+/** 
+ * handles signup, validates user information, initializes user document, saves user to db, returns user information
+ * @name POST/api/users/signup'
+ * @param {string} req.body.name
+ * @param {string} req.body.email
+ * @param {string} req.body.password
  * @returns {object} registration status, returns initialzed user information and token
  */
 router.post("/signup", function (req, res) {
@@ -67,10 +69,12 @@ router.post("/signup", function (req, res) {
   });
 });
 
-/** handles signin, checks credentials, returns token & user-relevant information
- * @param {string} name username sent by user
- * @param {string} password password sent by user
- * @returns {object} returns populated and satinized user information
+/** 
+ * handles signin, checks credentials, returns token & user-relevant populated information
+ * @name POST/api/users/signin
+ * @param {string} req.body.name username sent by user
+ * @param {string} req.body.password password sent by user
+ * @returns {object} returns populated and satinized user information (no password or _id)
  */
 router.post("/signin", async (req, res) => {
   const { name, password } = req.body;
@@ -116,14 +120,15 @@ router.post("/signin", async (req, res) => {
   res.json({ result: true, response: sanitizedUser });
 });
 
-/** uptades user preference information
- * @route put '/users/preference' 
+/** 
+ * uptades user preference information
+ * @name PUT/api/users/preference' 
  * @param {string} req.body.token user identifier
  * @param {string[]} req.body.regime allergens information
  * @param {string[]} req.body.excludeAliments aliments _id
- * @param {boolean} req.body.planningDisplay
+ * @param {boolean} req.body.planningDisplay wheter or not do display recipes in a planning format
  * @param {string} req.body.favStore store _id
- * @param {number} req.body.postCode
+ * @param {number} req.body.postCode user postcode
  * @returns {object} status of the update operation, return object containing updated user preferences
  */
 router.put("/preference", async (req, res, next) => {
@@ -173,11 +178,13 @@ router.put("/preference", async (req, res, next) => {
 
 //------------USER PLANNED RECIPES CRUD OPERATIONS-----------//
 
-/** add new recipe to the currentRecipe field in user collection
- * @param {string} recipeId _id of the recipe
- * @param {date} date date at which to save the recipe
- * @param {number} amount for how many people the recipe is for
- * @param {string} token user token
+/** 
+ * add new recipe to the currentRecipe field in user collection
+ * @name POST/api/users/currentRecipes
+ * @param {string} req.body.recipeId _id of the recipe
+ * @param {date} req.body.date date at which to save the recipe
+ * @param {number} req.body.amount for how many people the recipe is for
+ * @param {string} req.body.token user token
  * @returns {object} recipe adding status, returns modified and populated currentRecipes array
  */
 router.post("/currentRecipes", async (req, res, next) => {
@@ -206,9 +213,11 @@ router.post("/currentRecipes", async (req, res, next) => {
   }
 });
 
-/** remove recipe from the currentRecipe field in user collection
- * @param {string} recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
- * @param {string} token user token
+/**
+ * remove recipe from the currentRecipe field in user collection
+ * @name DELETE/api/users/currentRecipes
+ * @param {string} req.body.recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
+ * @param {string} req.body.token user token
  * @returns {object} recipe removal status, returns modified and populated currentRecipes array
  */
 router.delete("/currentRecipes", async (req, res, next) => {
@@ -237,10 +246,13 @@ router.delete("/currentRecipes", async (req, res, next) => {
   }
 });
 
-/** modify recipe amount in the currentRecipe field in user collection
- * @param {string} recipeId _id of the recipe
- * @param {date} date date at which to modify the recipe
- * @param {number} amount for how many people the recipe is for
+/** 
+ * modify recipe amount and/or date in the currentRecipe field in user collection
+ * @name PUT/api/users/currentRecipes
+ * @param {string} req.body.recipeId _id of the recipe
+ * @param {date} req.body.date date at which to modify the recipe
+ * @param {number} req.body.amount for how many people the recipe is for
+ * @param {string} req.body.token
  * @returns {object} recipe modification status, returns modified and populated currentRecipes array
  */
 router.put("/currentRecipes", async (req, res, next) => {
@@ -284,7 +296,7 @@ router.put("/currentRecipes", async (req, res, next) => {
 
 // POST add recipe
 /**
- * @todo forcer à ajouter une recette id sinon tout crash
+ * @toDelete forcer à ajouter une recette id sinon tout crash
  */
 router.post("/add", function (req, res, next) {
   User.updateOne(
@@ -300,17 +312,25 @@ router.post("/add", function (req, res, next) {
 });
 
 /* POST like recipe */
+
+/**
+ * adds or removes a recipe _id from the likedRecipes field of a user document
+ * @name POST/api/users/like
+ * @param {string} req.body.token user identifier
+ * @param {object} req.body.recipe _id: _id of the recipe to use as reference
+ * @returns {object} result of the query, indiction message 
+ */
 router.post("/like", function (req, res, next) {
   User.updateOne(
     { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
-    { $addToSet: { favoriteRecipes: req.body } }
+    { $addToSet: { favoriteRecipes: req.body.recipe } }
   ).then((data) => {
     if (data.modifiedCount > 0) {
       res.json({ result: true, message: "Recipe liked" });
     } else {
       User.updateOne(
         { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
-        { $pull: { favoriteRecipes: req.body } }
+        { $pull: { favoriteRecipes: req.body.recipe } }
       ).then((data) => {
         if (data.modifiedCount > 0) {
           res.json({ result: false, message: "Recipe unliked" });
@@ -323,7 +343,7 @@ router.post("/like", function (req, res, next) {
 });
 
 // GET list ingredients
-/**@todo to be removed later on since already fetching on signin, turn it to a put route to modify and add recipes to planning */
+/**@toDelete to be removed later on since already fetching on signin, turn it to a put route to modify and add recipes to planning */
 router.get("/recipes", async (req, res, next) => {
   const user = await User.findOne({
     token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd",
