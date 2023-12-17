@@ -116,13 +116,14 @@ router.post("/signin", async (req, res) => {
   res.json({ result: true, response: sanitizedUser });
 });
 
-/** updates user preference information
- * @param {string} token user identifier
- * @param {string[]} regime allergens information
- * @param {string[]} excludeAliments aliments _id
- * @param {boolean} planningDisplay
- * @param {string} favStore store _id
- * @param {number} postCode
+/** uptades user preference information
+ * @route put '/users/preference' 
+ * @param {string} req.body.token user identifier
+ * @param {string[]} req.body.regime allergens information
+ * @param {string[]} req.body.excludeAliments aliments _id
+ * @param {boolean} req.body.planningDisplay
+ * @param {string} req.body.favStore store _id
+ * @param {number} req.body.postCode
  * @returns {object} status of the update operation, return object containing updated user preferences
  */
 router.put("/preference", async (req, res, next) => {
@@ -157,7 +158,7 @@ router.put("/preference", async (req, res, next) => {
 
   //update user preferences
   const user = await User.findOneAndUpdate(
-    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+    { token: token },
     { $set: update },
     { new: true }
   );
@@ -176,17 +177,18 @@ router.put("/preference", async (req, res, next) => {
  * @param {string} recipeId _id of the recipe
  * @param {date} date date at which to save the recipe
  * @param {number} amount for how many people the recipe is for
+ * @param {string} token user token
  * @returns {object} recipe adding status, returns modified and populated currentRecipes array
  */
 router.post("/currentRecipes", async (req, res, next) => {
-  const { recipeId, date = new Date(), amount = 1 } = req.body;
+  const { recipeId, date = new Date(), amount = 1, token } = req.body;
 
   if (!recipeId) {
     res.json({ result: false, response: "Invalid recipe id" });
   }
 
   const user = await User.findOneAndUpdate(
-    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+    { token: token },
     { $push: { currentRecipes: { id: recipeId, date: date, nb: amount } } },
     { new: true }
   ).populate({
@@ -206,17 +208,18 @@ router.post("/currentRecipes", async (req, res, next) => {
 
 /** remove recipe from the currentRecipe field in user collection
  * @param {string} recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
+ * @param {string} token user token
  * @returns {object} recipe removal status, returns modified and populated currentRecipes array
  */
 router.delete("/currentRecipes", async (req, res, next) => {
-  const { recipeId } = req.body;
+  const { recipeId, token } = req.body;
 
   if (!recipeId) {
     res.json({ result: false, response: "Invalid recipe id" });
   }
 
   const user = await User.findOneAndUpdate(
-    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+    { token: token },
     { $pull: { currentRecipes: { _id: recipeId } } },
     { new: true }
   ).populate({
@@ -241,7 +244,7 @@ router.delete("/currentRecipes", async (req, res, next) => {
  * @returns {object} recipe modification status, returns modified and populated currentRecipes array
  */
 router.put("/currentRecipes", async (req, res, next) => {
-  const { recipeId, date, amount } = req.body;
+  const { recipeId, date, amount, token } = req.body;
 
   const query = {};
 
@@ -255,7 +258,7 @@ router.put("/currentRecipes", async (req, res, next) => {
 
   const user = await User.findOneAndUpdate(
     {
-      token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd",
+      token: token,
       "currentRecipes._id": recipeId,
     },
     { $set: query },
