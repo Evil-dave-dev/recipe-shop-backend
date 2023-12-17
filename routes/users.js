@@ -300,14 +300,14 @@ router.post("/add", function (req, res, next) {
 router.post("/like", function (req, res, next) {
   User.updateOne(
     { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
-    { $addToSet: { favoriteRecipes: req.body._id } }
+    { $addToSet: { favoriteRecipes: req.body } }
   ).then((data) => {
     if (data.modifiedCount > 0) {
       res.json({ result: true, message: "Recipe liked" });
     } else {
       User.updateOne(
         { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
-        { $pull: { favoriteRecipes: req.body._id } }
+        { $pull: { favoriteRecipes: req.body } }
       ).then((data) => {
         if (data.modifiedCount > 0) {
           res.json({ result: false, message: "Recipe unliked" });
