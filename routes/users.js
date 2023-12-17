@@ -299,6 +299,29 @@ router.post("/add", function (req, res, next) {
   });
 });
 
+/* POST like recipe */
+router.post("/like", function (req, res, next) {
+  User.updateOne(
+    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+    { $addToSet: { favoriteRecipes: req.body } }
+  ).then((data) => {
+    if (data.modifiedCount > 0) {
+      res.json({ result: true, message: "Recipe liked" });
+    } else {
+      User.updateOne(
+        { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+        { $pull: { favoriteRecipes: req.body } }
+      ).then((data) => {
+        if (data.modifiedCount > 0) {
+          res.json({ result: false, message: "Recipe unliked" });
+        } else {
+          res.json({ result: false, message: "Recipe not liked or unliked" });
+        }
+      });
+    }
+  });
+});
+
 // GET list ingredients
 /**@todo to be removed later on since already fetching on signin, turn it to a put route to modify and add recipes to planning */
 router.get("/recipes", async (req, res, next) => {
