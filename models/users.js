@@ -24,9 +24,7 @@ const usersSchema = mongoose.Schema({
   token: String,
   preference: preferenceSchema,
   favoriteRecipes: [
-    {
-      id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" },
-    },
+    { id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" } },
   ],
   myRecipes: [{ id: { type: mongoose.Schema.Types.ObjectId, ref: "recipes" } }],
   currentRecipes: [recipesSchema],

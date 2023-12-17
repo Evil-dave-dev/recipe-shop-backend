@@ -5,9 +5,7 @@ const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const { checkBody } = require("../modules/checkBody");
 
-
 //------------USER ACCOUNT CRUD OPERATIONS-----------//
-
 
 /** handles signup, validates user information, initialize user document, save user to db, return user information
  * @param {string} name
@@ -118,7 +116,7 @@ router.post("/signin", async (req, res) => {
   res.json({ result: true, response: sanitizedUser });
 });
 
-/** uptades user preference information
+/** updates user preference information
  * @param {string} token user identifier
  * @param {string[]} regime allergens information
  * @param {string[]} excludeAliments aliments _id
@@ -172,11 +170,7 @@ router.put("/preference", async (req, res, next) => {
   }
 });
 
-
-
-
 //------------USER PLANNED RECIPES CRUD OPERATIONS-----------//
-
 
 /** add new recipe to the currentRecipe field in user collection
  * @param {string} recipeId _id of the recipe
@@ -281,14 +275,9 @@ router.put("/currentRecipes", async (req, res, next) => {
   }
 });
 
-
-
 //
 
-
-
 //------------NOT FINISHED STUFF-----------//
-
 
 // POST add recipe
 /**
@@ -312,20 +301,28 @@ router.post("/add", function (req, res, next) {
 router.get("/recipes", async (req, res, next) => {
   const user = await User.findOne({
     token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd",
-  }).populate({
-    path: "currentRecipes.id",
-    populate: {
-      path: "ingredients.id",
-      model: "ingredients",
-    },
   })
-  .populate({
-    path: "historyRecipes.id",
-    populate: {
-      path: "ingredients.id",
-      model: "ingredients",
-    },
-  });
+    .populate({
+      path: "currentRecipes.id",
+      populate: {
+        path: "ingredients.id",
+        model: "ingredients",
+      },
+    })
+    .populate({
+      path: "historyRecipes.id",
+      populate: {
+        path: "ingredients.id",
+        model: "ingredients",
+      },
+    });
+  // .populate({
+  //   path: "favoriteRecipes.id",
+  //   populate: {
+  //     path: "ingredients.id",
+  //     model: "ingredients",
+  //   },
+  // });
 
   res.json({ result: true, response: { currentRecipes: user.currentRecipes } });
 });
