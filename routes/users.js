@@ -119,12 +119,13 @@ router.post("/signin", async (req, res) => {
 });
 
 /** uptades user preference information
- * @param {string} token user identifier
- * @param {string[]} regime allergens information
- * @param {string[]} excludeAliments aliments _id
- * @param {boolean} planningDisplay
- * @param {string} favStore store _id
- * @param {number} postCode
+ * @route put '/users/preference' 
+ * @param {string} req.body.token user identifier
+ * @param {string[]} req.body.regime allergens information
+ * @param {string[]} req.body.excludeAliments aliments _id
+ * @param {boolean} req.body.planningDisplay
+ * @param {string} req.body.favStore store _id
+ * @param {number} req.body.postCode
  * @returns {object} status of the update operation, return object containing updated user preferences
  */
 router.put("/preference", async (req, res, next) => {
