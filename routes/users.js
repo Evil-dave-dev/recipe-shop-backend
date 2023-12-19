@@ -221,8 +221,62 @@ router.post("/currentRecipes", async (req, res, next) => {
  * @returns {object} recipe removal status, returns modified and populated currentRecipes array
  */
 router.delete("/currentRecipes", async (req, res, next) => {
+  const { recipeId, token } = req.body;
+
+  if (!recipeId) {
+    res.json({ result: false, response: "Invalid recipe id" });
+  }
+
+  const user = await User.findOneAndUpdate(
+    { token: token },
+    { $pull: { currentRecipes: { _id: recipeId } } },
+    { new: true }
+  ).populate({
+    path: "currentRecipes.id",
+    populate: {
+      path: "ingredients.id",
+      model: "ingredients",
+    },
+  });
+
+  if (user !== null) {
+    res.json({ result: true, response: user.currentRecipes });
+  } else {
+    res.json({ result: false, error: "Couldn't delete recipe" });
+  }
+});
+
+/**
+ * remove all recipes from the currentRecipe collection and add it to the history collection
+ * @name PUT/api/users/archive
+ * @param {string} req.body.recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
+ * @param {string} req.body.token user token
+ */
+router.put("/archive", async (req, res, next) => {
   const { token } = req.body;
 
+  // if (!recipeId) {
+  //   res.json({ result: false, response: "Invalid recipe id" });
+  // }
+
+  // const user = await User.findOneAndUpdate(
+  //   { token: token },
+  //   { $set: { currentRecipes: { _id: recipeId } } },
+  //   { $pull: { historyRecipes: { _id: recipeId } } },
+  //   { new: true }
+  // ).populate({
+  //   path: "currentRecipes.id",
+  //   populate: {
+  //     path: "ingredients.id",
+  //     model: "ingredients",
+  //   },
+  // });
+
+  // if (user !== null) {
+  //   res.json({ result: true, response: user.historyRecipes });
+  // } else {
+  //   res.json({ result: false, error: "Couldn't archive recipe" });
+  // }
   try {
     const current = await User.findOne({ token: token });
 
@@ -245,39 +299,6 @@ router.delete("/currentRecipes", async (req, res, next) => {
     }
   } catch (error) {
     res.json({ error });
-  }
-});
-
-/**
- * remove all recipes from the currentRecipe collection and add it to the history collection
- * @name PUT/api/users/archive
- * @param {string} req.body.recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
- * @param {string} req.body.token user token
- */
-router.put("/archive", async (req, res, next) => {
-  const { recipeId, token } = req.body;
-
-  if (!recipeId) {
-    res.json({ result: false, response: "Invalid recipe id" });
-  }
-
-  const user = await User.findOneAndUpdate(
-    { token: token },
-    { $pull: { currentRecipes: { _id: { $in: recipeIds } } } },
-    { $push: { historyRecipes: { $each: recipeIds } } },
-    { new: true }
-  ).populate({
-    path: "historyRecipes.id",
-    populate: {
-      path: "ingredients.id",
-      model: "ingredients",
-    },
-  });
-
-  if (user !== null) {
-    res.json({ result: true, response: user.historyRecipes });
-  } else {
-    res.json({ result: false, error: "Couldn't archive recipe" });
   }
 });
 
