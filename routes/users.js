@@ -282,7 +282,10 @@ router.put("/archive", async (req, res, next) => {
 
     const user = await User.findOneAndUpdate(
       { token: token },
-      { $set: { historyRecipes: current.currentRecipes, currentRecipes: [] } },
+      {
+        $set: { currentRecipes: [] },
+        $push: { historyRecipes: { $each: [...current.currentRecipes] } },
+      },
       { new: true }
     ).populate({
       path: "currentRecipes.id",
