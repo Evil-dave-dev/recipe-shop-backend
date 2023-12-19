@@ -223,24 +223,28 @@ router.post("/currentRecipes", async (req, res, next) => {
 router.delete("/currentRecipes", async (req, res, next) => {
   const { token } = req.body;
 
-  const current = await User.findOne({ token: token });
+  try {
+    const current = await User.findOne({ token: token });
 
-  const user = await User.findOneAndUpdate(
-    { token: token },
-    { $set: { historyRecipes: current.currentRecipes } },
-    { new: true }
-  ).populate({
-    path: "currentRecipes.id",
-    populate: {
-      path: "ingredients.id",
-      model: "ingredients",
-    },
-  });
+    const user = await User.findOneAndUpdate(
+      { token: token },
+      { $set: { historyRecipes: current.currentRecipes, currentRecipes: [] } },
+      { new: true }
+    ).populate({
+      path: "currentRecipes.id",
+      populate: {
+        path: "ingredients.id",
+        model: "ingredients",
+      },
+    });
 
-  if (user !== null) {
-    res.json({ result: true, response: user.currentRecipes });
-  } else {
-    res.json({ result: false, error: "Couldn't delete recipe" });
+    if (user !== null) {
+      res.json({ result: true, response: user.currentRecipes });
+    } else {
+      res.json({ result: false, error: "Couldn't delete recipe" });
+    }
+  } catch (error) {
+    res.json({ error });
   }
 });
 
