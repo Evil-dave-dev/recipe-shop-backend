@@ -293,7 +293,11 @@ router.put("/archive", async (req, res, next) => {
     });
 
     if (user !== null) {
-      res.json({ result: true, response: user.currentRecipes });
+      res.json({
+        result: true,
+        current: user.currentRecipes,
+        history: user.historyRecipes,
+      });
     } else {
       res.json({ result: false, error: "Couldn't delete recipe" });
     }
