@@ -7,7 +7,7 @@ const { checkBody } = require("../modules/checkBody");
 
 //------------USER ACCOUNT CRUD OPERATIONS-----------//
 
-/** 
+/**
  * handles signup, validates user information, initializes user document, saves user to db, returns user information
  * @name POST/api/users/signup'
  * @param {string} req.body.name
@@ -69,7 +69,7 @@ router.post("/signup", function (req, res) {
   });
 });
 
-/** 
+/**
  * handles signin, checks credentials, returns token & user-relevant populated information
  * @name POST/api/users/signin
  * @param {string} req.body.name username sent by user
@@ -120,9 +120,9 @@ router.post("/signin", async (req, res) => {
   res.json({ result: true, response: sanitizedUser });
 });
 
-/** 
+/**
  * uptades user preference information
- * @name PUT/api/users/preference' 
+ * @name PUT/api/users/preference'
  * @param {string} req.body.token user identifier
  * @param {string[]} req.body.regime allergens information
  * @param {string[]} req.body.excludeAliments aliments _id
@@ -178,7 +178,7 @@ router.put("/preference", async (req, res, next) => {
 
 //------------USER PLANNED RECIPES CRUD OPERATIONS-----------//
 
-/** 
+/**
  * add new recipe to the currentRecipe field in user collection
  * @name POST/api/users/currentRecipes
  * @param {string} req.body.recipeId _id of the recipe
@@ -221,15 +221,13 @@ router.post("/currentRecipes", async (req, res, next) => {
  * @returns {object} recipe removal status, returns modified and populated currentRecipes array
  */
 router.delete("/currentRecipes", async (req, res, next) => {
-  const { recipeId, token } = req.body;
+  const { token } = req.body;
 
-  if (!recipeId) {
-    res.json({ result: false, response: "Invalid recipe id" });
-  }
+  const current = await User.findOne({ token: token });
 
   const user = await User.findOneAndUpdate(
     { token: token },
-    { $pull: { currentRecipes: { _id: recipeId } } },
+    { $set: { historyRecipes: current.currentRecipes } },
     { new: true }
   ).populate({
     path: "currentRecipes.id",
@@ -246,7 +244,40 @@ router.delete("/currentRecipes", async (req, res, next) => {
   }
 });
 
-/** 
+/**
+ * remove all recipes from the currentRecipe collection and add it to the history collection
+ * @name PUT/api/users/archive
+ * @param {string} req.body.recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
+ * @param {string} req.body.token user token
+ */
+router.put("/archive", async (req, res, next) => {
+  const { recipeId, token } = req.body;
+
+  if (!recipeId) {
+    res.json({ result: false, response: "Invalid recipe id" });
+  }
+
+  const user = await User.findOneAndUpdate(
+    { token: token },
+    { $pull: { currentRecipes: { _id: { $in: recipeIds } } } },
+    { $push: { historyRecipes: { $each: recipeIds } } },
+    { new: true }
+  ).populate({
+    path: "historyRecipes.id",
+    populate: {
+      path: "ingredients.id",
+      model: "ingredients",
+    },
+  });
+
+  if (user !== null) {
+    res.json({ result: true, response: user.historyRecipes });
+  } else {
+    res.json({ result: false, error: "Couldn't archive recipe" });
+  }
+});
+
+/**
  * modify recipe amount and/or date in the currentRecipe field in user collection
  * @name PUT/api/users/currentRecipes
  * @param {string} req.body.recipeId _id of the recipe
@@ -318,7 +349,7 @@ router.post("/add", function (req, res, next) {
  * @name POST/api/users/like
  * @param {string} req.body.token user identifier
  * @param {object} req.body.recipe _id: _id of the recipe to use as reference
- * @returns {object} result of the query, indiction message 
+ * @returns {object} result of the query, indiction message
  */
 router.post("/like", function (req, res, next) {
   User.updateOne(
