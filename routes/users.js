@@ -291,7 +291,7 @@ router.put("/archive", async (req, res, next) => {
  * @param {string} req.body.recipeId _id of the recipe
  * @param {date} req.body.date date at which to modify the recipe
  * @param {number} req.body.amount for how many people the recipe is for
- * @param {string} req.body.token
+ * @param {string} req.body.token user identifier
  * @returns {object} recipe modification status, returns modified and populated currentRecipes array
  */
 router.put("/currentRecipes", async (req, res, next) => {
@@ -330,26 +330,7 @@ router.put("/currentRecipes", async (req, res, next) => {
 });
 
 
-//------------NOT FINISHED STUFF-----------//
-
-// POST add recipe
-/**
- * @toDelete forcer à ajouter une recette id sinon tout crash
- */
-router.post("/add", function (req, res, next) {
-  User.updateOne(
-    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
-    { $push: { currentRecipes: req.body } }
-  ).then((data) => {
-    if (data.modifiedCount > 0) {
-      res.json({ result: true, message: "Recipe added successfully." });
-    } else {
-      res.json({ result: false, message: "Recipe not added." });
-    }
-  });
-});
-
-/* POST like recipe */
+//------------LIKES AND PERSONAL RECIPES-----------//
 
 /**
  * adds or removes a recipe _id from the likedRecipes field of a user document
@@ -378,37 +359,6 @@ router.post("/like", function (req, res, next) {
       });
     }
   });
-});
-
-// GET list ingredients
-/**@toDelete to be removed later on since already fetching on signin, turn it to a put route to modify and add recipes to planning */
-router.get("/recipes", async (req, res, next) => {
-  const user = await User.findOne({
-    token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd",
-  })
-    .populate({
-      path: "currentRecipes.id",
-      populate: {
-        path: "ingredients.id",
-        model: "ingredients",
-      },
-    })
-    .populate({
-      path: "historyRecipes.id",
-      populate: {
-        path: "ingredients.id",
-        model: "ingredients",
-      },
-    });
-  // .populate({
-  //   path: "favoriteRecipes.id",
-  //   populate: {
-  //     path: "ingredients.id",
-  //     model: "ingredients",
-  //   },
-  // });
-
-  res.json({ result: true, response: { currentRecipes: user.currentRecipes } });
 });
 
 module.exports = router;

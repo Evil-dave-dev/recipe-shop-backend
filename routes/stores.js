@@ -112,7 +112,8 @@ router.post("/addNewStore", async (req, res, next) => {
 });
 
 /**
- * @param {object[]} list of ingredient {name, amount}
+ * @name PUT/api/stores/lowestPrices
+ * @param {object[]} ingredientsList of ingredient {name, amount}
  * @returns {object} - query status, list of ingredients and their lowest computed price {amount, name, item: {ref, qty, unit, price,}}
  */
 router.put("/lowestPrices", async (req, res) => {

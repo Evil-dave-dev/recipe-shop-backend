@@ -68,14 +68,6 @@ router.get("/", async (req, res) => {
   res.json({ res: response });
 });
 
-/**@toDelete */
-router.get("/find/tag=:tag", async (req, res) => {
-  const response = await Recipe.find({ tags: { $in: [req.params.tag] } })
-    .populate("ingredients.id")
-    .sort({ _id: -1 });
-  res.json({ res: response });
-});
-
 /**
  * search recipes by myltiple parameters
  * @name GET/api/recipes/search
@@ -132,6 +124,23 @@ router.get("/search", async (req, res) => {
   res.json({ result: true, response: recipes });
 });
 
+/**
+ * Populates a list of ingredients ids
+ *
+ * @name GET/api/recipes/populateIds
+ * @param req.query.idsList - "," separated list of ingredient ids
+ * @returns {object} - query status, returns populated list of recipes
+ */
+router.get("/populateIds", async (req, res) => {
+  const { idsList } = req.query;
+  const data = idsList.split(",");
+
+  const queryResult = await Recipe.find({ _id: { $in: data } })
+    .populate("ingredients.id")
+    .sort({ _id: -1 });
+
+  res.json({ result: true, response: queryResult });
+});
 
 /**
  * upload picture to cloudinary and return the url
