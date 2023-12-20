@@ -178,8 +178,8 @@ router.put("/preference", async (req, res, next) => {
 
 //------------USER PLANNED RECIPES CRUD OPERATIONS-----------//
 
-/**
- * add new recipe to the currentRecipe field in user collection
+/** 
+ * Add 1 new recipe to the currentRecipe field in user collection
  * @name POST/api/users/currentRecipes
  * @param {string} req.body.recipeId _id of the recipe
  * @param {date} req.body.date date at which to save the recipe
@@ -214,7 +214,7 @@ router.post("/currentRecipes", async (req, res, next) => {
 });
 
 /**
- * remove recipe from the currentRecipe field in user collection
+ * Remove 1 recipe from the currentRecipe field in user collection
  * @name DELETE/api/users/currentRecipes
  * @param {string} req.body.recipeId _id of the recipe object(id, nb, date, _id) saved in currentRecipes array
  * @param {string} req.body.token user token
@@ -329,7 +329,6 @@ router.put("/currentRecipes", async (req, res, next) => {
   }
 });
 
-//
 
 //------------NOT FINISHED STUFF-----------//
 
