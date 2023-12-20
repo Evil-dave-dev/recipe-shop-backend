@@ -143,7 +143,8 @@ router.get("/populateIds", async (req, res) => {
 });
 
 /**
- * upload picture to cloudinary and return the url
+ * Uploads picture to cloudinary and returns the url
+ * 
  * @name POST/api/recipes/pictures
  * @param {file??} req.files.data picture file to upload
  * @returns {object} query status, saved picuture url
