@@ -133,6 +133,10 @@ router.get("/search", async (req, res) => {
  */
 router.get("/populateIds", async (req, res) => {
   const { idsList } = req.query;
+  
+  if(!idsList){
+    res.json({result: false, error: "idsList not provided"})
+  }
   const data = idsList.split(",");
 
   const queryResult = await Recipe.find({ _id: { $in: data } })
