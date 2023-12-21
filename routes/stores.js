@@ -89,6 +89,13 @@ const generateProductCalalogue = (store, ingredients) => {
   });
 };
 
+
+
+/**
+ * Add a new store to db
+ * 
+ * 
+ */
 router.post("/addNewStore", async (req, res, next) => {
   const { name, logo = "", catalogue = [], adress } = req.body;
   if (!name || !adress) {
@@ -117,7 +124,7 @@ router.post("/addNewStore", async (req, res, next) => {
  * @returns {object} - query status, list of ingredients and their lowest computed price {amount, name, item: {ref, qty, unit, price,}}
  */
 router.put("/lowestPrices", async (req, res) => {
-  const { ingredientsList } = req.body;
+  const { ingredientsList = [] } = req.body;
   const sortedIngredients = ingredientsList.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -158,7 +165,8 @@ router.put("/lowestPrices", async (req, res) => {
       };
       ref[sortedIngredients[i].name] = (result)
     }
-    return {store: {name: store.name, coordinates: store.adress, logo: store.logo}, products: ref}
+
+    return {store: {name: store.name, coordinates: store.adress, logo: store.logo, storeId: store._id}, products: ref}
   });
 
   res.json({ response: storesResults });
