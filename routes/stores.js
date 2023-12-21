@@ -19,7 +19,7 @@ const storeReference = {
   ["E.Leclerc Carvin"]: 0.975,
   ["Cc Auchan Flandre Littoral"]: 1,
   ["Carrefour Drive Lens Maës"]: 1.025,
-  ["MONOPRIX (MONOPRIX LILLE TANNEURS)"]: 1.05,
+  ["Monoprix Lille Tanneurs"]: 1.05,
 };
 const qtyReference = {
   ["g"]: [150, 500, 1000],
