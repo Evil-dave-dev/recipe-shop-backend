@@ -8,6 +8,7 @@ const fs = require("fs");
 
 /**
  * add a recipe to database
+ * 
  * @name POST/api/recipes/
  * @param {string}name name of the recipe
  * @param {string}creator name of the creator
@@ -58,6 +59,7 @@ router.post("/", async (req, res, next) => {
 
 /**
  * get all recipes
+ * 
  * @name GET/api/recipes
  * @returns {object} query status, returns populated recipes array
  */
@@ -70,6 +72,7 @@ router.get("/", async (req, res) => {
 
 /**
  * search recipes by myltiple parameters
+ * 
  * @name GET/api/recipes/search
  * @param {string} req.query.input reference to use for searching by name in database
  * @param {string} req.query.time max amount of time for searcing by preparation time in db, if "135" no time limit
