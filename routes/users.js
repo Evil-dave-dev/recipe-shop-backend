@@ -152,7 +152,7 @@ router.put("/preference", async (req, res, next) => {
     update["preference.excludeAliments"] = excludeAliments;
   }
   if (favStore) {
-    update["preference.excludeAliments.favStore"] = favStore;
+    update["preference.favStore"] = favStore;
   }
   if (postCode) {
     update["preference.postCode"] = postCode;

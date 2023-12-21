@@ -94,7 +94,7 @@ const generateProductCalalogue = (store, ingredients) => {
 /**
  * Add a new store to db
  * 
- * 
+ * @name POST/api/stores/addNewStore
  */
 router.post("/addNewStore", async (req, res, next) => {
   const { name, logo = "", catalogue = [], adress } = req.body;
@@ -176,7 +176,7 @@ router.put("/lowestPrices", async (req, res) => {
  * For each store, genrerates 3 Product references with random prices and qty for each ingredient stored in db
  *
  * @name PUT/api/stores/generate
- * @returns - query status, enerated results
+ * @returns - query status, generated results
  */
 router.put("/generate", async (req, res) => {
   const stores = await Store.find();
