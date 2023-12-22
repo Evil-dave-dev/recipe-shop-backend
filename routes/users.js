@@ -340,15 +340,16 @@ router.put("/currentRecipes", async (req, res, next) => {
  * @returns {object} result of the query, indiction message
  */
 router.post("/like", function (req, res, next) {
+  console.log(req.body);
   User.updateOne(
-    { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+    { token: req.body.token },
     { $addToSet: { favoriteRecipes: req.body.recipe } }
   ).then((data) => {
     if (data.modifiedCount > 0) {
       res.json({ result: true, message: "Recipe liked" });
     } else {
       User.updateOne(
-        { token: "eaHhFVrDdt2wDaomqxgCoXys2M2hSqUd" },
+        { token: req.body.token },
         { $pull: { favoriteRecipes: req.body.recipe } }
       ).then((data) => {
         if (data.modifiedCount > 0) {
